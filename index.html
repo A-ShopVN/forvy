@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GIRL SPACE - Bắt Đầu</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(135deg, #fff0f5 0%, #e6e6fa 100%);
+            height: 100vh; display: flex; align-items: center; justify-content: center;
+        }
+        .auth-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            padding: 40px 30px; border-radius: 25px;
+            box-shadow: 0 15px 35px rgba(255, 182, 193, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            width: 90%; max-width: 400px; text-align: center;
+        }
+        .auth-card h1 { color: #d16b8b; margin-bottom: 10px; font-size: 2.2em; }
+        .auth-card p { color: #777; margin-bottom: 25px; font-weight: 600; }
+        .input-group { margin-bottom: 18px; text-align: left; }
+        .input-group label { display: block; margin-bottom: 8px; color: #555; font-weight: 700; font-size: 0.9em; }
+        .input-group input {
+            width: 100%; padding: 14px; border: 1px solid #ffe4e1;
+            border-radius: 12px; outline: none; font-family: inherit; transition: 0.3s;
+            background: #fffafb;
+        }
+        .input-group input:focus { border-color: #ffb6c1; box-shadow: 0 0 8px rgba(209, 107, 139, 0.2); background: white;}
+        .btn {
+            width: 100%; padding: 14px; background: linear-gradient(135deg, #ffb6c1, #d87093); color: white;
+            border: none; border-radius: 15px; font-size: 1.1em; font-weight: 700;
+            cursor: pointer; transition: 0.3s; margin-top: 10px; box-shadow: 0 5px 15px rgba(216, 112, 147, 0.3);
+        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(216, 112, 147, 0.4); }
+        .toggle-text { margin-top: 25px; font-size: 0.95em; color: #666; font-weight: 600;}
+        .toggle-text span { color: #d16b8b; font-weight: 700; cursor: pointer; text-decoration: underline; text-decoration-color: #ffe4e1; text-underline-offset: 4px; transition: 0.2s;}
+        .toggle-text span:hover { color: #8c7ae6; text-decoration-color: #8c7ae6;}
+
+        /* Custom SweetAlert2 (Glassmorphism) */
+        div:where(.swal2-container) div:where(.swal2-popup) {
+            background: rgba(255, 255, 255, 0.9) !important; backdrop-filter: blur(15px) !important; border: 1px solid rgba(255, 182, 193, 0.5) !important; border-radius: 25px !important; font-family: 'Quicksand', sans-serif !important;
+        }
+        div:where(.swal2-container) button:where(.swal2-styled.swal2-confirm) {
+            background: linear-gradient(135deg, #ffb6c1, #d87093) !important; border-radius: 15px !important; font-weight: bold !important;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="auth-card">
+        <h1>✨ GIRL SPACE</h1>
+        <p id="auth-subtitle">Chào mừng nàng quay trở lại!</p>
+
+        <div class="input-group">
+            <label>Email của nàng</label>
+            <input type="email" placeholder="ngoc@example.com" id="email">
+        </div>
+        <div class="input-group">
+            <label>Mật khẩu bí mật</label>
+            <input type="password" placeholder="••••••••" id="password">
+        </div>
+
+        <button class="btn" id="btn-submit">Đăng Nhập Ngay</button>
+
+        <div class="toggle-text">
+            <span id="toggle-mode">Chưa có không gian riêng? Đăng ký nhé</span>
+        </div>
+    </div>
+
+    <script type="module">
+        // Import Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+
+        // Cấu hình của bạn
+        const firebaseConfig = {
+            apiKey: "AIzaSyAWw-g8NlpLTdOyc0J-HRXVxp2vaVS41U8",
+            authDomain: "my-blog-d10de.firebaseapp.com",
+            projectId: "my-blog-d10de",
+            storageBucket: "my-blog-d10de.firebasestorage.app",
+            messagingSenderId: "1040033908209",
+            appId: "1:1040033908209:web:c7fb09f9c6ce89829e3050",
+            measurementId: "G-DC0VDJ7E6N"
+        };
+
+        // Khởi tạo
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // Biến điều khiển giao diện
+        let isLoginMode = true;
+        const btnSubmit = document.getElementById('btn-submit');
+        const toggleText = document.getElementById('toggle-mode');
+        const subtitle = document.getElementById('auth-subtitle');
+
+        // Hàm chuyển đổi Đăng nhập / Đăng ký
+        toggleText.addEventListener('click', () => {
+            isLoginMode = !isLoginMode;
+            if (isLoginMode) {
+                subtitle.innerText = "Chào mừng nàng quay trở lại!";
+                btnSubmit.innerText = "Đăng Nhập Ngay";
+                toggleText.innerText = "Chưa có không gian riêng? Đăng ký nhé";
+            } else {
+                subtitle.innerText = "Tạo không gian tuyệt vời của bạn!";
+                btnSubmit.innerText = "Đăng Ký Tài Khoản";
+                toggleText.innerText = "Đã có tài khoản? Đăng nhập thôi";
+            }
+        });
+
+        // Xử lý sự kiện Submit bằng Firebase
+        btnSubmit.addEventListener('click', () => {
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+
+            if (!email || !password) {
+                Swal.fire({ icon: 'warning', title: 'Khoan đã!', text: 'Nàng nhớ điền đầy đủ Email và Mật khẩu nha.', confirmButtonText: 'Mình biết rồi' });
+                return;
+            }
+
+            // Đổi text nút chờ
+            btnSubmit.innerText = "Đang xử lý... ⏳";
+            btnSubmit.disabled = true;
+
+            if (isLoginMode) {
+                // ĐĂNG NHẬP
+                signInWithEmailAndPassword(auth, email, password)
+                    .then((userCredential) => {
+                        // Lưu email vào LocalStorage để đẩy sang main.html
+                        localStorage.setItem('userEmail', userCredential.user.email);
+                        
+                        Swal.fire({ icon: 'success', title: 'Tuyệt vời!', text: 'Đăng nhập thành công, chuẩn bị vào thôi!', timer: 1500, showConfirmButton: false }).then(() => {
+                            window.location.href = "main.html";
+                        });
+                    })
+                    .catch((error) => {
+                        btnSubmit.innerText = "Đăng Nhập Ngay"; btnSubmit.disabled = false;
+                        let msg = "Thông tin không chính xác rồi, nàng kiểm tra lại nhé.";
+                        if (error.code === 'auth/user-not-found') msg = "Email này chưa được đăng ký nha.";
+                        if (error.code === 'auth/wrong-password') msg = "Sai mật khẩu mất rồi!";
+                        Swal.fire({ icon: 'error', title: 'Ôi hỏng!', text: msg, confirmButtonText: 'Thử lại' });
+                    });
+            } else {
+                // ĐĂNG KÝ
+                createUserWithEmailAndPassword(auth, email, password)
+                    .then((userCredential) => {
+                        localStorage.setItem('userEmail', userCredential.user.email);
+                        
+                        Swal.fire({ icon: 'success', title: 'Chào mừng!', text: 'Đăng ký thành công, không gian của nàng đã sẵn sàng.', timer: 1500, showConfirmButton: false }).then(() => {
+                            window.location.href = "main.html";
+                        });
+                    })
+                    .catch((error) => {
+                        btnSubmit.innerText = "Đăng Ký Tài Khoản"; btnSubmit.disabled = false;
+                        let msg = "Có lỗi xảy ra, nàng thử lại nhé.";
+                        if (error.code === 'auth/email-already-in-use') msg = "Email này đã có người sử dụng rồi!";
+                        if (error.code === 'auth/weak-password') msg = "Mật khẩu hơi yếu, nàng chọn cái nào trên 6 ký tự nha.";
+                        Swal.fire({ icon: 'error', title: 'Chưa được rồi!', text: msg, confirmButtonText: 'Thử lại' });
+                    });
+            }
+        });
+    </script>
+</body>
+</html>
