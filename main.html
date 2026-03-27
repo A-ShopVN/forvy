@@ -213,7 +213,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut, updatePassword, EmailAuthProvider, reauthenticateWithCredential } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, updateDoc, increment, collection, addDoc, deleteDoc, serverTimestamp, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, arrayUnion ,increment, collection, addDoc, deleteDoc, serverTimestamp, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
         import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-messaging.js";
         
         const firebaseConfig = {
@@ -267,29 +267,27 @@
         // ==========================================
         async function getTokenFCM() {
     try {
-        // Chờ Service Worker sẵn sàng hoàn toàn
         const swRegistration = await navigator.serviceWorker.register('./firebase-messaging-sw.js');
-        await navigator.serviceWorker.ready; // Thêm dòng này để chắc chắn SW đã active
-        
+        await navigator.serviceWorker.ready;
+
         const currentToken = await getToken(messaging, { 
             vapidKey: 'BBvCscSa-pvIfPxsrFbp6ffNnFsfhpcMICRaGsrphZOKtTaftEaOo8SeeJxTLR5CJqCWae58nBqLK74nDKk-qRM',
             serviceWorkerRegistration: swRegistration 
         });
-        
+
         if (currentToken && currentUser) {
-            console.log("🔑 Token mới:", currentToken);
-            // LƯU TOKEN VÀO FIRESTORE ĐỂ GIAI ĐOẠN 2 CÓ THỂ GỬI ĐƯỢC
             const userRef = doc(db, "users", currentUser.uid);
+            // Dùng arrayUnion để thêm token mới vào danh sách mà không xóa token cũ
             await updateDoc(userRef, {
-                fcmToken: currentToken,
+                fcmTokens: arrayUnion(currentToken), 
                 lastTokenUpdate: serverTimestamp()
             });
+            console.log("✅ Đã cập nhật danh sách thiết bị nhận tin!");
         }
     } catch (error) {
         console.error("Lỗi lấy/lưu Token:", error);
     }
 }
-
         async function requestNotificationPermission() {
             try {
                 if (!("Notification" in window)) return;
