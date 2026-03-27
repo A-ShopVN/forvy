@@ -7,8 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
     
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script> -->
-     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -31,10 +30,12 @@
         .input-row { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;}
         .input-row input { flex: 1; min-width: 120px; padding: 12px; border: 1px solid #ffe4e1; border-radius: 12px; outline: none; font-family: inherit;}
         .btn-add { background: #8c7ae6; color: white; border: none; padding: 12px 25px; border-radius: 12px; cursor: pointer; font-weight: bold; transition: 0.3s;}
-       /* --- CSS LỊCH HỌC NÂNG CẤP --- */
+        
+        /* --- CSS LỊCH HỌC NÂNG CẤP --- */
         .schedule-item { display: flex; justify-content: space-between; align-items: center; border-left: 5px solid #8c7ae6; padding: 15px; background: #f8f9fa; border-radius: 0 12px 12px 0; margin-bottom: 15px; }
         .btn-delete-sch { background: none; border: none; color: #ff7675; cursor: pointer; font-size: 1.2em; transition: 0.2s; padding: 0 5px; }
         .btn-delete-sch:hover { transform: scale(1.2) rotate(10deg); }
+        
         .compose-box { background: #fffafb; padding: 15px; border-radius: 15px; border: 1px solid #ffe4e1; margin-bottom: 20px; }
         .compose-box textarea { width: 100%; height: 80px; border: none; background: transparent; resize: none; outline: none; font-family: inherit; font-size: 1em; }
         .post-card { background: #fff; padding: 20px; border-radius: 16px; border: 1px solid #ffeeef; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.02); position: relative; }
@@ -48,25 +49,12 @@
         .action-btn { background: none; border: none; color: #888; font-size: 0.9em; cursor: pointer; display: flex; align-items: center; gap: 5px; font-family: inherit; transition: 0.2s;}
         .action-btn.liked { color: #ff7675; font-weight: bold; }
         
-        .action-btn.animating-pop {
-            animation: heart-pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        @keyframes heart-pop {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.4); }
-            100% { transform: scale(1); }
-        }
+        .action-btn.animating-pop { animation: heart-pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes heart-pop { 0% { transform: scale(1); } 50% { transform: scale(1.4); } 100% { transform: scale(1); } }
 
         .like-count { display: inline-block; transition: all 0.2s; }
-        .like-count.animating-jump {
-            animation: num-jump 0.4s ease;
-            color: #ff7675;
-        }
-        @keyframes num-jump {
-            0% { transform: translateY(0); }
-            50% { transform: translateY(-5px) scale(1.2); }
-            100% { transform: translateY(0); }
-        }
+        .like-count.animating-jump { animation: num-jump 0.4s ease; color: #ff7675; }
+        @keyframes num-jump { 0% { transform: translateY(0); } 50% { transform: translateY(-5px) scale(1.2); } 100% { transform: translateY(0); } }
 
         .comment-section { margin-top: 15px; background: #fffafb; border-radius: 12px; padding: 10px; display: none; }
         .comment-item { margin-bottom: 12px; padding: 10px; background: #fff; border-radius: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
@@ -99,50 +87,17 @@
         .nav-icon { font-size: 1.6em; margin-bottom: 3px; transition: 0.3s; }
         .nav-item.active { color: #d16b8b; background: #fff0f5; }
         .nav-item.active .nav-icon { transform: translateY(-3px) scale(1.1); }
+        
         /* --- HIỆU ỨNG 3D CHO BÀI GIẢI MÃ (NÂNG CẤP POPUP) --- */
-        /* Cần perspective trên container của SweetAlert để hiệu ứng flipped mượt nhất */
-        .swal2-container.swal2-shown {
-            perspective: 2000px; /* Tạo độ sâu 3D cho toàn bộ popup */
-        }
-        
-        .mystic-cards-container {
-            display: flex; gap: 15px; justify-content: center;
-            padding: 20px 0; perspective: 1000px; /* Độ sâu riêng cho 3 thẻ */
-        }
-        
-        .mystic-card {
-            width: 30%; aspect-ratio: 2/3; position: relative;
-            /* Animation xoay mượt mà hơn */
-            transition: transform 0.8s cubic-bezier(0.4, 0.0, 0.2, 1); 
-            transform-style: preserve-3d; cursor: pointer;
-        }
-        
-        .mystic-card.flipped {
-            transform: rotateY(180deg) scale(1.15); z-index: 10; cursor: default;
-        }
-        
-        /* Hiệu ứng mờ dần 2 lá không chọn */
-        .mystic-card.hidden-card {
-            opacity: 0; transform: scale(0.5); pointer-events: none; transition: 0.5s;
-        }
-        
-        .card-face {
-            position: absolute; width: 100%; height: 100%; backface-visibility: hidden;
-            border-radius: 15px; display: flex; align-items: center; justify-content: center;
-            text-align: center; padding: 10px; box-shadow: 0 8px 20px rgba(255,182,193,0.3);
-        }
-        
-        .card-front {
-            background: linear-gradient(135deg, #a8a5e6, #ffb6c1); color: white;
-            font-size: 2.5em; border: 2px solid #fff;
-        }
-        
+        .swal2-container.swal2-shown { perspective: 2000px; }
+        .mystic-cards-container { display: flex; gap: 15px; justify-content: center; padding: 20px 0; perspective: 1000px; }
+        .mystic-card { width: 30%; aspect-ratio: 2/3; position: relative; transition: transform 0.8s cubic-bezier(0.4, 0.0, 0.2, 1); transform-style: preserve-3d; cursor: pointer; }
+        .mystic-card.flipped { transform: rotateY(180deg) scale(1.15); z-index: 10; cursor: default; }
+        .mystic-card.hidden-card { opacity: 0; transform: scale(0.5); pointer-events: none; transition: 0.5s; }
+        .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 15px; display: flex; align-items: center; justify-content: center; text-align: center; padding: 10px; box-shadow: 0 8px 20px rgba(255,182,193,0.3); }
+        .card-front { background: linear-gradient(135deg, #a8a5e6, #ffb6c1); color: white; font-size: 2.5em; border: 2px solid #fff; }
         .card-front::after { content: '✨'; }
-        
-        .card-back {
-            background: #fffafb; transform: rotateY(180deg); border: 2px solid #ffb6c1;
-            color: #d16b8b; font-size: 0.85em; font-weight: bold; overflow-y: auto;
-        }
+        .card-back { background: #fffafb; transform: rotateY(180deg); border: 2px solid #ffb6c1; color: #d16b8b; font-size: 0.85em; font-weight: bold; overflow-y: auto; }
     </style>
 </head>
 <body>
@@ -196,7 +151,6 @@
                 <button class="btn-add" id="btn-draw" style="background: linear-gradient(135deg, #ffb6c1, #d87093); padding: 15px 40px; border-radius: 30px;" onclick="startDraw()">Bắt Đầu Giải Mã ✨</button>
                 
                 <div id="cards-container" class="cards-wrapper" style="display: none;"></div>
-                
                 <div id="card-result" style="margin-top: 30px; padding: 25px; background: #fff0f5; border-radius: 20px; display: none; color: #d16b8b; font-weight: bold;"></div>
             </div>
         </div>
@@ -261,6 +215,7 @@
         import { getAuth, onAuthStateChanged, signOut, updatePassword, EmailAuthProvider, reauthenticateWithCredential } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc, updateDoc, increment, collection, addDoc, deleteDoc, serverTimestamp, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
         import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-messaging.js";
+        
         const firebaseConfig = {
             apiKey: "AIzaSyAWw-g8NlpLTdOyc0J-HRXVxp2vaVS41U8",
             authDomain: "my-blog-d10de.firebaseapp.com",
@@ -273,9 +228,10 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+        const messaging = getMessaging(app);
 
         let currentUser = null;
-        let isLikingProcess = false; // Biến chặn Spam click
+        let isLikingProcess = false; 
 
         function getTodayStr() { return new Date().toLocaleDateString('en-CA'); }
         
@@ -303,100 +259,82 @@
             element.classList.add('active');
         };
 
-        // --- HÀM LIKE FIX LỖI ANIMATION ---
-        window.toggleLike = async (postId, btnElement) => {
-            if (!currentUser || isLikingProcess) return;
-            isLikingProcess = true; // Chặn bấm liên tục gây lỗi
+        // ==========================================
+        // --- LOGIC XIN QUYỀN VÀ LẤY TOKEN FCM ---
+        // ==========================================
+        // ==========================================
+        // --- LOGIC XIN QUYỀN VÀ LẤY TOKEN FCM ---
+        // ==========================================
+        async function getTokenFCM() {
+    try {
+        // Chờ Service Worker sẵn sàng hoàn toàn
+        const swRegistration = await navigator.serviceWorker.register('./firebase-messaging-sw.js');
+        await navigator.serviceWorker.ready; // Thêm dòng này để chắc chắn SW đã active
+        
+        const currentToken = await getToken(messaging, { 
+            vapidKey: 'BBvCscSa-pvIfPxsrFbp6ffNnFsfhpcMICRaGsrphZOKtTaftEaOo8SeeJxTLR5CJqCWae58nBqLK74nDKk-qRM',
+            serviceWorkerRegistration: swRegistration 
+        });
+        
+        if (currentToken && currentUser) {
+            console.log("🔑 Token mới:", currentToken);
+            // LƯU TOKEN VÀO FIRESTORE ĐỂ GIAI ĐOẠN 2 CÓ THỂ GỬI ĐƯỢC
+            const userRef = doc(db, "users", currentUser.uid);
+            await updateDoc(userRef, {
+                fcmToken: currentToken,
+                lastTokenUpdate: serverTimestamp()
+            });
+        }
+    } catch (error) {
+        console.error("Lỗi lấy/lưu Token:", error);
+    }
+}
 
-            const userRef = doc(db, "confessions", postId);
-            const docSnap = await getDoc(userRef);
-            
-            if (docSnap.exists()) {
-                const data = docSnap.data();
-                const currentLikes = data.likes || [];
-                const isLiking = !currentLikes.includes(currentUser.uid);
+        async function requestNotificationPermission() {
+            try {
+                if (!("Notification" in window)) return;
 
-                // 1. CẬP NHẬT GIAO DIỆN & CHẠY HIỆU ỨNG NGAY LẬP TỨC (TRƯỚC KHI GỬI FIREBASE)
-                const countElement = btnElement.querySelector('.like-count');
-                let currentCount = parseInt(countElement.innerText);
+                if (Notification.permission === 'default') {
+                    const result = await Swal.fire({
+                        title: 'Bật thông báo nhé? 🔔',
+                        text: 'Để hệ thống nhắc nhở lịch học và không bỏ lỡ thông điệp vũ trụ nào nha!',
+                        icon: 'question', showCancelButton: true,
+                        confirmButtonText: 'Bật luôn ✨', cancelButtonText: 'Để sau'
+                    });
 
-                if (isLiking) {
-                    // Bắn tim
-                    const heart = confetti.shapeFromText({ text: '❤️', scalar: 3 }); 
-                    confetti({ shapes: [heart], particleCount: 20, spread: 70, origin: { y: 0.7 }, colors: ['#ff7675', '#ffb6c1']});
-                    
-                    // Cập nhật DOM
-                    btnElement.innerHTML = `❤️ <span class="like-count animating-jump">${currentCount + 1}</span>`;
-                    btnElement.classList.add('liked');
-                    btnElement.classList.add('animating-pop');
-                } else {
-                    btnElement.innerHTML = `🤍 <span class="like-count">${currentCount - 1}</span>`;
-                    btnElement.classList.remove('liked');
-                    btnElement.classList.remove('animating-pop');
-                }
-
-                // Gỡ class hiệu ứng sau khi chạy xong để lần sau bấm còn chạy tiếp
-                setTimeout(() => {
-                    if (btnElement.querySelector('.animating-jump')) {
-                        btnElement.querySelector('.like-count').classList.remove('animating-jump');
+                    if (result.isConfirmed) {
+                        const permission = await Notification.requestPermission();
+                        if (permission === 'granted') {
+                            Swal.fire('Thành công! 🎉', 'Đã bật thông báo. Nàng sẽ không lỡ lịch học nữa đâu.', 'success');
+                            getTokenFCM();
+                        } else {
+                            Swal.fire('Hơi tiếc xíu! 🥺', 'Nàng đã từ chối nhận thông báo. Nàng có thể bật lại ở biểu tượng ổ khóa trên thanh địa chỉ nhé.', 'info');
+                        }
                     }
-                    btnElement.classList.remove('animating-pop');
-                }, 400);
-
-                // 2. ÂM THẦM GỬI LÊN FIREBASE
-                const newLikes = isLiking 
-                    ? [...currentLikes, currentUser.uid]
-                    : currentLikes.filter(id => id !== currentUser.uid);
-                
-                await updateDoc(userRef, { likes: newLikes });
+                } 
+                else if (Notification.permission === 'granted') {
+                    getTokenFCM();
+                } 
+            } catch (error) {
+                console.error("Lỗi khi cài đặt thông báo:", error);
             }
-            isLikingProcess = false; // Mở khóa
-        };
+        }
 
-        window.toggleComments = (id) => {
-            const section = document.getElementById(`comments-${id}`);
-            if(section) section.style.display = section.style.display === 'block' ? 'none' : 'block';
-        };
+        onMessage(messaging, (payload) => {
+            Swal.fire({ title: payload.notification.title, text: payload.notification.body, icon: 'info', confirmButtonText: 'Tuyệt' });
+        });
 
-        window.addComment = async (postId) => {
-            const input = document.getElementById(`input-${postId}`);
-            const text = input.value.trim();
-            if (!text || !currentUser) return;
-            await addDoc(collection(db, "confessions", postId, "comments"), {
-                uid: currentUser.uid, content: text, createdAt: serverTimestamp()
-            });
-            input.value = '';
-        };
-
-        window.showPostMenu = (postId, currentContent) => {
-            const content = decodeURIComponent(currentContent);
-            Swal.fire({
-                title: 'Tùy chọn', showDenyButton: true, showCancelButton: true, confirmButtonText: 'Sửa', denyButtonText: 'Xóa'
-            }).then(async (result) => {
-                if (result.isConfirmed) {
-                    const { value: newText } = await Swal.fire({ title: 'Sửa bài', input: 'textarea', inputValue: content });
-                    if (newText) await updateDoc(doc(db, "confessions", postId), { content: newText });
-                } else if (result.isDenied) {
-                    await deleteDoc(doc(db, "confessions", postId));
-                }
-            });
-        };
-
-        window.editComment = (postId, commentId, oldText) => {
-            Swal.fire({ title: 'Tùy chọn', input: 'text', inputValue: oldText, showDenyButton: true, confirmButtonText: 'Lưu', denyButtonText: 'Xóa' }).then(async (res) => {
-                const ref = doc(db, "confessions", postId, "comments", commentId);
-                if (res.isConfirmed && res.value) await updateDoc(ref, { content: res.value });
-                else if (res.isDenied) await deleteDoc(ref);
-            });
-        };
-
-        window.openLikedTab = () => { document.getElementById('sub-tab-liked').style.display = 'block'; document.body.style.overflow = 'hidden'; };
-        window.closeLikedTab = () => { document.getElementById('sub-tab-liked').style.display = 'none'; document.body.style.overflow = 'auto'; };
-
+        // ==========================================
+        // --- INIT FIREBASE AUTH VÀ RENDER VIEW ---
+        // ==========================================
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
                 document.getElementById('user-display-email').innerText = user.email;
+                
+                // Gọi hàm xin quyền duy nhất 1 lần ở đây
+                requestNotificationPermission(); 
+
                 const userRef = doc(db, "users", user.uid);
                 const docSnap = await getDoc(userRef);
                 
@@ -425,9 +363,13 @@
                     await setDoc(userRef, { email: user.email, streak: 0, totalChallenges: 0, lastStreakDate: "" });
                 }
                 loadDailyTasks();
+                
             } else { window.location.href = "index.html"; }
         });
 
+        // ==========================================
+        // --- CÁC HÀM XỬ LÝ NHIỆM VỤ, LỊCH HỌC VÀ BÀI ĐĂNG ---
+        // ==========================================
         function loadDailyTasks() {
             const today = getTodayStr();
             let savedDate = localStorage.getItem('taskDate');
@@ -476,16 +418,56 @@
             }
         };
 
-        // --- RENDER BÀI VIẾT TỐI ƯU ---
+        window.addSchedule = async () => {
+            if (!currentUser) return;
+            const subject = document.getElementById('subject').value.trim(); 
+            const time = document.getElementById('time').value;
+            if(!subject || !time) return Swal.fire('Khoan đã', 'Nàng nhập đủ tên môn và giờ nhé!', 'warning');
+            const btn = document.querySelector('#tab-schedule .btn-add');
+            btn.disabled = true; btn.innerText = 'Đang lưu...';
+            await addDoc(collection(db, "users", currentUser.uid, "schedules"), { subject: subject, time: time, createdAt: serverTimestamp() });
+            document.getElementById('subject').value = ''; document.getElementById('time').value = '';
+            btn.disabled = false; btn.innerText = 'Thêm';
+        };
+
+        window.deleteSchedule = (schId) => {
+            Swal.fire({ title: 'Xóa lịch này?', icon: 'warning', showCancelButton: true, confirmButtonText: 'Xóa luôn', cancelButtonText: 'Giữ lại' })
+            .then(async (res) => {
+                if(res.isConfirmed) await deleteDoc(doc(db, "users", currentUser.uid, "schedules", schId));
+            });
+        };
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                const qSch = query(collection(db, "users", user.uid, "schedules"), orderBy("time", "asc"));
+                onSnapshot(qSch, (snap) => {
+                    const list = document.getElementById('schedule-list');
+                    list.innerHTML = '';
+                    if(snap.empty) {
+                        list.innerHTML = '<p style="text-align:center; color:#999; margin-top: 20px;">Nàng chưa có lịch trình nào. Thêm ngay nhé!</p>';
+                        return;
+                    }
+                    snap.forEach(d => {
+                        const data = d.data();
+                        list.innerHTML += `
+                            <div class="schedule-item">
+                                <div>
+                                    <strong style="color:#8c7ae6; font-size:1.1em;">${data.subject}</strong> - <strong>${data.time}</strong>
+                                    <div style="font-size:0.85em; color:#888; margin-top:3px;">🔔 Sẽ chăm chỉ hoàn thành</div>
+                                </div>
+                                <button class="btn-delete-sch" onclick="deleteSchedule('${d.id}')">✖</button>
+                            </div>
+                        `;
+                    });
+                });
+            }
+        });
+
         const qConfess = query(collection(db, "confessions"), orderBy("createdAt", "desc"));
         onSnapshot(qConfess, (snapshot) => {
             const feed = document.getElementById('confess-feed');
             const fullLikedList = document.getElementById('liked-posts-full-list');
-            
-            // Lấy danh sách ID của các bài viết đang hiển thị để không vẽ lại những bài không đổi
             const existingPostIds = Array.from(feed.children).map(child => child.id.replace('post-', ''));
-            
-            // Xóa rác: Bỏ những bài không còn trên Firebase
             const incomingIds = snapshot.docs.map(doc => doc.id);
             existingPostIds.forEach(id => {
                 if (!incomingIds.includes(id)) {
@@ -495,7 +477,7 @@
             });
 
             let hasLiked = false;
-            fullLikedList.innerHTML = ''; // Tab Đã thích ít khi xem, cứ render lại toàn bộ cho dễ
+            fullLikedList.innerHTML = ''; 
 
             snapshot.forEach((docSnap) => {
                 const data = { id: docSnap.id, ...docSnap.data() };
@@ -529,12 +511,7 @@
                         </div>
                     </div>
                 `;
-
-                // CHỈ THÊM MỚI NẾU BÀI CHƯA CÓ TRÊN MÀN HÌNH (Tránh mất animation)
-                if (!existingPostIds.includes(data.id)) {
-                    feed.insertAdjacentHTML('beforeend', cardHTML);
-                }
-
+                if (!existingPostIds.includes(data.id)) feed.insertAdjacentHTML('beforeend', cardHTML);
                 if (isLiked) {
                     hasLiked = true;
                     fullLikedList.insertAdjacentHTML('beforeend', cardHTML.replace(`id="comments-${data.id}"`, `style="display:none"`));
@@ -581,270 +558,94 @@
             textEl.value = '';
         });
 
-        window.handleLogout = () => { signOut(auth).then(() => window.location.href = "index.html"); };
-        // ==========================================
-        // --- LOGIC GIẢI MÃ (3 LÁ BÀI 3D TRONG POPUP) ---
-        // ==========================================
-        const healingMessages = [
-            // 10 thông điệp cũ
-            "Hôm nay là một ngày tuyệt vời để tỏa sáng! ✨",
-            "Mọi sự cố gắng của nàng đều sẽ được đền đáp xứng đáng. 💖",
-            "Đừng ép bản thân quá, nghỉ ngơi một chút cũng không sao đâu. 🍵",
-            "Vũ trụ gửi đến nàng một cái ôm thật ấm áp. 🫂",
-            "Nàng đang làm rất tốt, hãy tự hào về chính mình nhé! 🌟",
-            "Sắp có một niềm vui bất ngờ gõ cửa trái tim nàng đó. 🎁",
-            "Hãy hít thở thật sâu, mọi chuyện rồi sẽ ổn thôi. 🍃",
-            "Nàng xinh đẹp nhất khi tự tin là chính mình. 💃",
-            "Hôm nay hãy tự thưởng cho bản thân một điều gì đó ngọt ngào nhé! 🍰",
-            "Một nụ cười của nàng có thể thắp sáng cả ngày dài. 😊",
-            
-            // 10 thông điệp mới siêu "chữa lành"
-            "Chút muộn phiền hôm nay rồi sẽ hóa thành cơn mưa tưới mát tâm hồn nàng. 🌧️",
-            "Nàng là một bông hoa độc nhất vô nhị, hãy cứ nở rộ theo cách của riêng mình. 🌸",
-            "Khó khăn chỉ là bước đệm để nàng nhảy cao hơn thôi. Cố lên nhé cô gái! 💪",
-            "Hãy nhẹ nhàng với bản thân, nàng vẫn đang trong quá trình trưởng thành mà. 🌱",
-            "Người duy nhất nàng cần so sánh là chính nàng của ngày hôm qua. 🦋",
-            "Một giấc ngủ ngon sẽ xua tan mọi mỏi mệt. Tối nay nhớ đi ngủ sớm nhé! 🌙",
-            "Những phép màu tuyệt vời nhất thường đến vào lúc nàng ít ngờ tới nhất. 🎇",
-            "Đừng quên ôm lấy chính mình và nói 'Cảm ơn vì đã luôn nỗ lực' nhé. 👏",
-            "Nàng hoàn toàn xứng đáng được yêu thương và trân trọng. 💌",
-            "Chậm lại một nhịp, lắng nghe trái tim và làm những gì khiến nàng thấy bình yên. 🎧"
-        ];
-
-        let isDrawing = false; // Chặn click spam
-
-        window.startDraw = async () => {
-            if(!currentUser) return;
-            const userRef = doc(db, "users", currentUser.uid);
+        window.toggleLike = async (postId, btnElement) => {
+            if (!currentUser || isLikingProcess) return;
+            isLikingProcess = true; 
+            const userRef = doc(db, "confessions", postId);
             const docSnap = await getDoc(userRef);
-            
-            if(docSnap.exists()) {
+            if (docSnap.exists()) {
                 const data = docSnap.data();
-                const today = getTodayStr();
-
-                // 1. Kiểm tra giới hạn 1 ngày/lần
-                if(data.lastDrawDate === today && data.lastDrawnMessage) {
-                    Swal.fire({
-                        title: 'Nàng đã rút rồi! 🔮',
-                        text: `Hôm nay nàng đã rút được thông điệp: "${data.lastDrawnMessage}" rồi nha.`,
-                        icon: 'info', confirmButtonText: 'Mình nhớ rồi'
-                    });
-                    return;
+                const currentLikes = data.likes || [];
+                const isLiking = !currentLikes.includes(currentUser.uid);
+                const countElement = btnElement.querySelector('.like-count');
+                let currentCount = parseInt(countElement.innerText);
+                if (isLiking) {
+                    const heart = confetti.shapeFromText({ text: '❤️', scalar: 3 }); 
+                    confetti({ shapes: [heart], particleCount: 20, spread: 70, origin: { y: 0.7 }, colors: ['#ff7675', '#ffb6c1']});
+                    btnElement.innerHTML = `❤️ <span class="like-count animating-jump">${currentCount + 1}</span>`;
+                    btnElement.classList.add('liked'); btnElement.classList.add('animating-pop');
+                } else {
+                    btnElement.innerHTML = `🤍 <span class="like-count">${currentCount - 1}</span>`;
+                    btnElement.classList.remove('liked'); btnElement.classList.remove('animating-pop');
                 }
-
-                // 2. Nếu chưa rút -> Mở popup chứa 3 thẻ
-                Swal.fire({
-                    title: '🔮 Thông Điệp Vũ Trụ',
-                    html: `
-                        <p style="color: #666; margin-bottom: 5px;">Hít một hơi thật sâu và bốc một lá bài thu hút nàng nhất nhé.</p>
-                        <div class="mystic-cards-container">
-                            <div class="mystic-card" id="card-0">
-                                <div class="card-face card-front"></div>
-                                <div class="card-face card-back" id="back-0"></div>
-                            </div>
-                            <div class="mystic-card" id="card-1">
-                                <div class="card-face card-front"></div>
-                                <div class="card-face card-back" id="back-1"></div>
-                            </div>
-                            <div class="mystic-card" id="card-2">
-                                <div class="card-face card-front"></div>
-                                <div class="card-face card-back" id="back-2"></div>
-                            </div>
-                        </div>
-                    `,
-                    showConfirmButton: false, // Ẩn nút OK để nàng tự bấm bài
-                    showCancelButton: true,
-                    cancelButtonText: 'Để sau',
-                    allowOutsideClick: false, // Chống bấm ra ngoài làm mất bài
-                    width: '600px', // Đặt độ rộng để 3 thẻ xếp vừa
-                    didOpen: () => {
-                        // Thêm sự kiện click cho từng thẻ trong popup
-                        const allCards = Swal.getPopup().querySelectorAll('.mystic-card');
-                        allCards.forEach((card, index) => {
-                            card.addEventListener('click', () => {
-                                handleCardFlip(card, index, userRef, today);
-                            });
-                        });
-                    }
-                });
+                setTimeout(() => {
+                    if (btnElement.querySelector('.animating-jump')) btnElement.querySelector('.like-count').classList.remove('animating-jump');
+                    btnElement.classList.remove('animating-pop');
+                }, 400);
+                const newLikes = isLiking ? [...currentLikes, currentUser.uid] : currentLikes.filter(id => id !== currentUser.uid);
+                await updateDoc(userRef, { likes: newLikes });
             }
+            isLikingProcess = false; 
         };
 
-        // Hàm xử lý lật bài và cập nhật
-        async function handleCardFlip(element, index, userRef, todayDate) {
-            if (isDrawing) return;
-            isDrawing = true;
-
-            // Bốc thông điệp và gán
-            const msg = healingMessages[Math.floor(Math.random() * healingMessages.length)];
-            const backFace = element.querySelector(`#back-${index}`);
-            if(backFace) backFace.innerText = msg;
-            
-            // Lật lá bài
-            element.classList.add('flipped');
-            
-            // Ẩn 2 lá còn lại
-            const allCards = element.closest('.mystic-cards-container').querySelectorAll('.mystic-card');
-            allCards.forEach((card, i) => {
-                if(i !== index) {
-                    card.classList.add('hidden-card');
-                }
+        window.toggleComments = (id) => { const section = document.getElementById(`comments-${id}`); if(section) section.style.display = section.style.display === 'block' ? 'none' : 'block'; };
+        window.showPostMenu = (postId, currentContent) => {
+            const content = decodeURIComponent(currentContent);
+            Swal.fire({ title: 'Tùy chọn', showDenyButton: true, showCancelButton: true, confirmButtonText: 'Sửa', denyButtonText: 'Xóa'
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    const { value: newText } = await Swal.fire({ title: 'Sửa bài', input: 'textarea', inputValue: content });
+                    if (newText) await updateDoc(doc(db, "confessions", postId), { content: newText });
+                } else if (result.isDenied) await deleteDoc(doc(db, "confessions", postId));
             });
-
-            // Ghi vào Firebase để khóa lại
-            await updateDoc(userRef, { lastDrawDate: todayDate, lastDrawnMessage: msg });
-
-            // Pháo hoa mượt mà hơn
-            setTimeout(() => {
-                confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: ['#a8a5e6', '#ffb6c1', '#ffd1dc'] });
-            }, 500);
-
-            // Đợi bài lật xong rồi đóng popup sau 2s
-            setTimeout(() => {
-                Swal.close();
-                // Hiện lại popup chúc mừng có nội dung đầy đủ
-                Swal.fire({
-                    title: 'Thông Điệp Cho Nàng ✨',
-                    text: msg,
-                    icon: 'success', confirmButtonText: 'Tuyệt vời'
-                });
-                isDrawing = false;
-            }, 2500);
         };
-        window.addSchedule = async () => {
-            if (!currentUser) return;
-            const subject = document.getElementById('subject').value.trim(); 
-            const time = document.getElementById('time').value;
-            
-            if(!subject || !time) return Swal.fire('Khoan đã', 'Nàng nhập đủ tên môn và giờ nhé!', 'warning');
-            
-            const btn = document.querySelector('#tab-schedule .btn-add');
-            btn.disabled = true; btn.innerText = 'Đang lưu...';
-
-            await addDoc(collection(db, "users", currentUser.uid, "schedules"), {
-                subject: subject,
-                time: time,
-                createdAt: serverTimestamp()
-            });
-
-            document.getElementById('subject').value = ''; 
-            document.getElementById('time').value = '';
-            btn.disabled = false; btn.innerText = 'Thêm';
-        };
-
-        window.deleteSchedule = (schId) => {
-            Swal.fire({ title: 'Xóa lịch này?', icon: 'warning', showCancelButton: true, confirmButtonText: 'Xóa luôn', cancelButtonText: 'Giữ lại' })
-            .then(async (res) => {
-                if(res.isConfirmed) {
-                    await deleteDoc(doc(db, "users", currentUser.uid, "schedules", schId));
-                }
+        window.editComment = (postId, commentId, oldText) => {
+            Swal.fire({ title: 'Tùy chọn', input: 'text', inputValue: oldText, showDenyButton: true, confirmButtonText: 'Lưu', denyButtonText: 'Xóa' }).then(async (res) => {
+                const ref = doc(db, "confessions", postId, "comments", commentId);
+                if (res.isConfirmed && res.value) await updateDoc(ref, { content: res.value });
+                else if (res.isDenied) await deleteDoc(ref);
             });
         };
 
-        // Lắng nghe dữ liệu Lịch Học để vẽ ra màn hình
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                const qSch = query(collection(db, "users", user.uid, "schedules"), orderBy("time", "asc"));
-                onSnapshot(qSch, (snap) => {
-                    const list = document.getElementById('schedule-list');
-                    list.innerHTML = '';
-                    if(snap.empty) {
-                        list.innerHTML = '<p style="text-align:center; color:#999; margin-top: 20px;">Nàng chưa có lịch trình nào. Thêm ngay nhé!</p>';
-                        return;
-                    }
-                    snap.forEach(d => {
-                        const data = d.data();
-                        list.innerHTML += `
-                            <div class="schedule-item">
-                                <div>
-                                    <strong style="color:#8c7ae6; font-size:1.1em;">${data.subject}</strong> - <strong>${data.time}</strong>
-                                    <div style="font-size:0.85em; color:#888; margin-top:3px;">🔔 Sẽ chăm chỉ hoàn thành</div>
-                                </div>
-                                <button class="btn-delete-sch" onclick="deleteSchedule('${d.id}')">✖</button>
-                            </div>
-                        `;
-                    });
-                });
-            }
-        });
-        // --- TÍNH NĂNG ĐỔI MẬT KHẨU (CÓ XÁC NHẬN) ---
+        window.openLikedTab = () => { document.getElementById('sub-tab-liked').style.display = 'block'; document.body.style.overflow = 'hidden'; };
+        window.closeLikedTab = () => { document.getElementById('sub-tab-liked').style.display = 'none'; document.body.style.overflow = 'auto'; };
+        window.handleLogout = () => { signOut(auth).then(() => window.location.href = "index.html"); };
+
         window.changePassword = () => {
             if (!currentUser) return;
-
             Swal.fire({
                 title: 'Đổi Mật Khẩu 🔒',
                 html: `
                     <div style="text-align: left; margin-top: 10px;">
                         <label style="font-size: 0.85em; color: #777; font-weight: bold; margin-left: 5px;">Mật khẩu hiện tại:</label>
                         <input type="password" id="old-pass" class="swal2-input" placeholder="••••••••" style="border-radius: 15px; margin-bottom: 15px; margin-top: 5px;">
-                        
                         <label style="font-size: 0.85em; color: #777; font-weight: bold; margin-left: 5px;">Mật khẩu mới:</label>
                         <input type="password" id="new-pass" class="swal2-input" placeholder="Tối thiểu 6 ký tự" style="border-radius: 15px; margin-bottom: 15px; margin-top: 5px;">
-                        
                         <label style="font-size: 0.85em; color: #777; font-weight: bold; margin-left: 5px;">Xác nhận mật khẩu mới:</label>
                         <input type="password" id="confirm-pass" class="swal2-input" placeholder="Nhập lại mật khẩu mới" style="border-radius: 15px; margin-top: 5px;">
                     </div>
                 `,
-                confirmButtonText: 'Cập nhật ngay ✨',
-                showCancelButton: true, 
-                cancelButtonText: 'Để sau', 
-                focusConfirm: false,
+                confirmButtonText: 'Cập nhật ngay ✨', showCancelButton: true, cancelButtonText: 'Để sau', focusConfirm: false,
                 preConfirm: () => {
-                    const oldPass = document.getElementById('old-pass').value;
-                    const newPass = document.getElementById('new-pass').value;
-                    const confirmPass = document.getElementById('confirm-pass').value;
-
-                    // Kiểm tra các trường hợp nhập sai
-                    if (!oldPass || !newPass || !confirmPass) {
-                        Swal.showValidationMessage(`Nàng vui lòng điền đủ 3 ô nhé!`);
-                        return false;
-                    }
-                    if (newPass.length < 6) {
-                        Swal.showValidationMessage(`Mật khẩu mới phải từ 6 ký tự trở lên nàng nhé!`);
-                        return false;
-                    }
-                    if (newPass !== confirmPass) {
-                        Swal.showValidationMessage(`Mật khẩu xác nhận không khớp kìa!`);
-                        return false;
-                    }
-                    if (oldPass === newPass) {
-                        Swal.showValidationMessage(`Mật khẩu mới phải khác mật khẩu cũ chứ!`);
-                        return false;
-                    }
-                    
+                    const oldPass = document.getElementById('old-pass').value; const newPass = document.getElementById('new-pass').value; const confirmPass = document.getElementById('confirm-pass').value;
+                    if (!oldPass || !newPass || !confirmPass) { Swal.showValidationMessage(`Nàng vui lòng điền đủ 3 ô nhé!`); return false; }
+                    if (newPass.length < 6) { Swal.showValidationMessage(`Mật khẩu mới phải từ 6 ký tự trở lên nàng nhé!`); return false; }
+                    if (newPass !== confirmPass) { Swal.showValidationMessage(`Mật khẩu xác nhận không khớp kìa!`); return false; }
+                    if (oldPass === newPass) { Swal.showValidationMessage(`Mật khẩu mới phải khác mật khẩu cũ chứ!`); return false; }
                     return { oldPass, newPass };
                 }
             }).then(async (result) => {
                 if (result.isConfirmed) {
                     const { oldPass, newPass } = result.value;
-                    
-                    Swal.fire({
-                        title: 'Đang khóa chặt mật khẩu...',
-                        allowOutsideClick: false,
-                        didOpen: () => { Swal.showLoading(); }
-                    });
-
+                    Swal.fire({ title: 'Đang khóa chặt mật khẩu...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
                     try {
-                        // 1. Xác thực lại bằng mật khẩu cũ (Giải quyết triệt để lỗi của Firebase)
                         const credential = EmailAuthProvider.credential(currentUser.email, oldPass);
                         await reauthenticateWithCredential(currentUser, credential);
-
-                        // 2. Nếu mật khẩu cũ đúng, tiến hành đổi sang mật khẩu mới
                         await updatePassword(currentUser, newPass);
-
-                        Swal.fire({
-                            title: 'Thành công! 🎉', 
-                            text: 'Mật khẩu của nàng đã được đổi an toàn.', 
-                            icon: 'success',
-                            confirmButtonText: 'Tuyệt vời'
-                        });
-                        
+                        Swal.fire({ title: 'Thành công! 🎉', text: 'Mật khẩu của nàng đã được đổi an toàn.', icon: 'success', confirmButtonText: 'Tuyệt vời' });
                     } catch (error) {
-                        // Bắt lỗi nếu nhập sai pass cũ
                         let msg = 'Có lỗi xảy ra, nàng thử lại sau nha.';
-                        if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password') {
-                            msg = 'Mật khẩu hiện tại không đúng mất rồi!';
-                        }
+                        if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password') msg = 'Mật khẩu hiện tại không đúng mất rồi!';
                         Swal.fire({ title: 'Ôi hỏng!', text: msg, icon: 'error', confirmButtonText: 'Thử lại' });
                     }
                 }
@@ -852,54 +653,65 @@
         };
 
         // ==========================================
-        // --- HỆ THỐNG THÔNG BÁO CHẠY NGẦM (FCM) ---
+        // --- LOGIC GIẢI MÃ (3 LÁ BÀI 3D TRONG POPUP) ---
         // ==========================================
-        const messaging = getMessaging(app);
+        const healingMessages = [
+            "Hôm nay là một ngày tuyệt vời để tỏa sáng! ✨", "Mọi sự cố gắng của nàng đều sẽ được đền đáp xứng đáng. 💖",
+            "Đừng ép bản thân quá, nghỉ ngơi một chút cũng không sao đâu. 🍵", "Vũ trụ gửi đến nàng một cái ôm thật ấm áp. 🫂",
+            "Nàng đang làm rất tốt, hãy tự hào về chính mình nhé! 🌟", "Sắp có một niềm vui bất ngờ gõ cửa trái tim nàng đó. 🎁",
+            "Hãy hít thở thật sâu, mọi chuyện rồi sẽ ổn thôi. 🍃", "Nàng xinh đẹp nhất khi tự tin là chính mình. 💃",
+            "Hôm nay hãy tự thưởng cho bản thân một điều gì đó ngọt ngào nhé! 🍰", "Một nụ cười của nàng có thể thắp sáng cả ngày dài. 😊",
+            "Chút muộn phiền hôm nay rồi sẽ hóa thành cơn mưa tưới mát tâm hồn nàng. 🌧️", "Nàng là một bông hoa độc nhất vô nhị, hãy cứ nở rộ theo cách của riêng mình. 🌸",
+            "Khó khăn chỉ là bước đệm để nàng nhảy cao hơn thôi. Cố lên nhé cô gái! 💪", "Hãy nhẹ nhàng với bản thân, nàng vẫn đang trong quá trình trưởng thành mà. 🌱",
+            "Người duy nhất nàng cần so sánh là chính nàng của ngày hôm qua. 🦋", "Một giấc ngủ ngon sẽ xua tan mọi mỏi mệt. Tối nay nhớ đi ngủ sớm nhé! 🌙",
+            "Những phép màu tuyệt vời nhất thường đến vào lúc nàng ít ngờ tới nhất. 🎇", "Đừng quên ôm lấy chính mình và nói 'Cảm ơn vì đã luôn nỗ lực' nhé. 👏",
+            "Nàng hoàn toàn xứng đáng được yêu thương và trân trọng. 💌", "Chậm lại một nhịp, lắng nghe trái tim và làm những gì khiến nàng thấy bình yên. 🎧"
+        ];
+        let isDrawing = false; 
 
-        async function requestNotificationPermission() {
-            try {
-                console.log("Đang xin quyền gửi thông báo...");
-                const permission = await Notification.requestPermission();
-                
-                if (permission === 'granted') {
-                    console.log("Tuyệt vời! Đã được cấp quyền.");
-                    // Lấy Token (Địa chỉ độc nhất của điện thoại/máy tính này)
-                    const currentToken = await getToken(messaging, { 
-                        vapidKey: 'BBvCscSa-pvIfPxsrFbp6ffNnFsfhpcMICRaGsrphZOKtTaftEaOo8SeeJxTLR5CJqCWae58nBqLK74nDKk-qRM' 
-                    });
-                    
-                    if (currentToken) {
-                        console.log("🔑 MÃ TOKEN CỦA THIẾT BỊ NÀY:", currentToken);
-                        // Tạm thời in ra Console để chúng ta test tay trước
-                    } else {
-                        console.log("Không lấy được token.");
-                    }
-                } else {
-                    console.log("Bị từ chối quyền gửi thông báo.");
+        window.startDraw = async () => {
+            if(!currentUser) return;
+            const userRef = doc(db, "users", currentUser.uid);
+            const docSnap = await getDoc(userRef);
+            if(docSnap.exists()) {
+                const data = docSnap.data();
+                const today = getTodayStr();
+                if(data.lastDrawDate === today && data.lastDrawnMessage) {
+                    Swal.fire({ title: 'Nàng đã rút rồi! 🔮', text: `Hôm nay nàng đã rút được thông điệp: "${data.lastDrawnMessage}" rồi nha.`, icon: 'info', confirmButtonText: 'Mình nhớ rồi' });
+                    return;
                 }
-            } catch (error) {
-                console.error("Lỗi khi cài đặt thông báo:", error);
+                Swal.fire({
+                    title: '🔮 Thông Điệp Vũ Trụ',
+                    html: `
+                        <p style="color: #666; margin-bottom: 5px;">Hít một hơi thật sâu và bốc một lá bài thu hút nàng nhất nhé.</p>
+                        <div class="mystic-cards-container">
+                            <div class="mystic-card" id="card-0"><div class="card-face card-front"></div><div class="card-face card-back" id="back-0"></div></div>
+                            <div class="mystic-card" id="card-1"><div class="card-face card-front"></div><div class="card-face card-back" id="back-1"></div></div>
+                            <div class="mystic-card" id="card-2"><div class="card-face card-front"></div><div class="card-face card-back" id="back-2"></div></div>
+                        </div>
+                    `,
+                    showConfirmButton: false, showCancelButton: true, cancelButtonText: 'Để sau', allowOutsideClick: false, width: '600px',
+                    didOpen: () => {
+                        const allCards = Swal.getPopup().querySelectorAll('.mystic-card');
+                        allCards.forEach((card, index) => { card.addEventListener('click', () => { handleCardFlip(card, index, userRef, today); }); });
+                    }
+                });
             }
-        }
+        };
 
-        // Gọi hàm xin quyền ngay khi người dùng đăng nhập thành công
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                // ... (Các code cũ giữ nguyên)
-                requestNotificationPermission(); // Thêm dòng này vào trong onAuthStateChanged
-            }
-        });
-
-        // Xử lý khi nhận được thông báo lúc ĐANG MỞ web
-        onMessage(messaging, (payload) => {
-            console.log("Nhận được tin nhắn khi đang mở web: ", payload);
-            Swal.fire({
-                title: payload.notification.title,
-                text: payload.notification.body,
-                icon: 'info',
-                confirmButtonText: 'Tuyệt'
-            });
-        });
+        async function handleCardFlip(element, index, userRef, todayDate) {
+            if (isDrawing) return;
+            isDrawing = true;
+            const msg = healingMessages[Math.floor(Math.random() * healingMessages.length)];
+            const backFace = element.querySelector(`#back-${index}`);
+            if(backFace) backFace.innerText = msg;
+            element.classList.add('flipped');
+            const allCards = element.closest('.mystic-cards-container').querySelectorAll('.mystic-card');
+            allCards.forEach((card, i) => { if(i !== index) card.classList.add('hidden-card'); });
+            await updateDoc(userRef, { lastDrawDate: todayDate, lastDrawnMessage: msg });
+            setTimeout(() => { confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: ['#a8a5e6', '#ffb6c1', '#ffd1dc'] }); }, 500);
+            setTimeout(() => { Swal.close(); Swal.fire({ title: 'Thông Điệp Cho Nàng ✨', text: msg, icon: 'success', confirmButtonText: 'Tuyệt vời' }); isDrawing = false; }, 2500);
+        };
     </script>
 </body>
 </html>
