@@ -216,6 +216,20 @@
         import { getFirestore, doc, getDoc, setDoc, updateDoc, arrayUnion ,increment, collection, addDoc, deleteDoc, serverTimestamp, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
         import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-messaging.js";
         
+        // ==========================================
+        // --- NGĂN CHẶN NÚT BACK (CẤP ĐỘ NÂNG CAO) ---
+        // ==========================================
+        // Đẩy trạng thái 2 lần để tạo "bộ đệm" chống bấm/vuốt đúp
+        window.history.pushState("noback", null, window.location.href);
+        window.history.pushState("noback", null, window.location.href);
+
+        window.addEventListener('popstate', function (event) {
+            // Khi người dùng bấm lùi, lập tức đẩy lại trạng thái mới
+            window.history.pushState("noback", null, window.location.href);
+            // Cưỡng chế trình duyệt luôn tiến tới
+            window.history.forward();
+        });
+
         const firebaseConfig = {
             apiKey: "AIzaSyAWw-g8NlpLTdOyc0J-HRXVxp2vaVS41U8",
             authDomain: "my-blog-d10de.firebaseapp.com",
@@ -262,32 +276,30 @@
         // ==========================================
         // --- LOGIC XIN QUYỀN VÀ LẤY TOKEN FCM ---
         // ==========================================
-        // ==========================================
-        // --- LOGIC XIN QUYỀN VÀ LẤY TOKEN FCM ---
-        // ==========================================
         async function getTokenFCM() {
-    try {
-        const swRegistration = await navigator.serviceWorker.register('./firebase-messaging-sw.js');
-        await navigator.serviceWorker.ready;
+            try {
+                const swRegistration = await navigator.serviceWorker.register('./firebase-messaging-sw.js');
+                await navigator.serviceWorker.ready;
 
-        const currentToken = await getToken(messaging, { 
-            vapidKey: 'BBvCscSa-pvIfPxsrFbp6ffNnFsfhpcMICRaGsrphZOKtTaftEaOo8SeeJxTLR5CJqCWae58nBqLK74nDKk-qRM',
-            serviceWorkerRegistration: swRegistration 
-        });
+                const currentToken = await getToken(messaging, { 
+                    vapidKey: 'BBvCscSa-pvIfPxsrFbp6ffNnFsfhpcMICRaGsrphZOKtTaftEaOo8SeeJxTLR5CJqCWae58nBqLK74nDKk-qRM',
+                    serviceWorkerRegistration: swRegistration 
+                });
 
-        if (currentToken && currentUser) {
-            const userRef = doc(db, "users", currentUser.uid);
-            // Dùng arrayUnion để thêm token mới vào danh sách mà không xóa token cũ
-            await updateDoc(userRef, {
-                fcmTokens: arrayUnion(currentToken), 
-                lastTokenUpdate: serverTimestamp()
-            });
-            console.log("✅ Đã cập nhật danh sách thiết bị nhận tin!");
+                if (currentToken && currentUser) {
+                    const userRef = doc(db, "users", currentUser.uid);
+                    // Dùng arrayUnion để thêm token mới vào danh sách mà không xóa token cũ
+                    await updateDoc(userRef, {
+                        fcmTokens: arrayUnion(currentToken), 
+                        lastTokenUpdate: serverTimestamp()
+                    });
+                    console.log("✅ Đã cập nhật danh sách thiết bị nhận tin!");
+                }
+            } catch (error) {
+                console.error("Lỗi lấy/lưu Token:", error);
+            }
         }
-    } catch (error) {
-        console.error("Lỗi lấy/lưu Token:", error);
-    }
-}
+
         async function requestNotificationPermission() {
             try {
                 if (!("Notification" in window)) return;
@@ -710,6 +722,6 @@
             setTimeout(() => { confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: ['#a8a5e6', '#ffb6c1', '#ffd1dc'] }); }, 500);
             setTimeout(() => { Swal.close(); Swal.fire({ title: 'Thông Điệp Cho Nàng ✨', text: msg, icon: 'success', confirmButtonText: 'Tuyệt vời' }); isDrawing = false; }, 2500);
         };
-    </script>
+</script>
 </body>
 </html>
